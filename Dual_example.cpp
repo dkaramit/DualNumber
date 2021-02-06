@@ -36,5 +36,12 @@ int main(){
     }
 
 
+    vector<vector<LD>> v2={
+        {0,2},
+        {1,0}
+    };
+    DualTensor<LD> t1(v2); 
+
+
     return 0;
 }

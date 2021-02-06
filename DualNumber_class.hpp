@@ -11,11 +11,35 @@ Not sure, but we will see if it can be done this way...
 */
 
 #define Dual_Template template<class LD>
-#define Dual_Namespace DualNumber<class LD>
+#define DualN_Namespace DualNumber<class LD>
+#define DualT_Namespace DualTensor<class LD>
+
+
+// base class for tensors 
+Dual_Template
+class DualTensor{
+    private:
+    std::vector<std::vector<LD>> dualT;
+
+    public:
+    DualTensor(){}
+    
+    
+    DualTensor(const std::vector<std::vector<LD>> &T){
+        for(unsigned int i=0 ; i<T.size(); ++i ){
+            dualT.push_back(T[i]);
+            for(unsigned int j=0 ; j<T[i].size(); ++j ){
+                this->dualT[i].push_back(T[i][j]);
+            }
+
+        }
+    }
+
+};
 
 
 Dual_Template
-class DualNumber{
+class DualNumber: public DualTensor<LD> {
     private:
     std::vector<LD> dualN;
 
@@ -48,7 +72,7 @@ class DualNumber{
         if(len<other.componentsLength()){tmpV=other.components();}
 
         for (unsigned int i = 0; i < len; i++){
-            tmpV[i]= this->components(i) + other.components(i);
+            tmpV[i]= (*this)(i) + other.components(i);
         }
         
 
@@ -59,8 +83,12 @@ class DualNumber{
     //Note: the const (after the parameter list) guarantees that this->dualN will not be modified
     // This allows us to pass it as (const DualNumber &other)
     std::vector<LD>  components() const {return this->dualN;}
+
     LD  components(unsigned int i) const {return this->dualN[i];}
+    LD  operator()(unsigned int i) const {return this->dualN[i];}
+    
     unsigned int  componentsLength() const {return this->dualN.size();}
+    
     void resize(unsigned int N) {this->dualN.resize(N,0); }
 };
 
